@@ -1,5 +1,5 @@
 var animate = window.requestAnimationFrame ||
-    window.webkitRequestAnimationFram ||
+    window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     function(callback) {window.setTimeout(callback, 1000/60) };
 
@@ -25,7 +25,7 @@ var update = function() {
 };
 
 var render = function() {
-    context.fillStyle = "#FF00FF";
+    context.fillStyle = "#CCCCCC";
     context.fillRect(0, 0, width, height);
 };
 
@@ -39,24 +39,32 @@ function Paddle(x, y, width, height) {
 }
 
 Paddle.prototype.render = function() {
-    context.fillStyle = "#0000FF";
+    context.fillStyle = "#000000";
     context.fillRect(this.x, this.y, this.width, this.height);
 };
 
 function Player() {
     this.paddle = new Paddle(175, 580, 50, 10);
+    this.score = 0;
 }
 
 function Computer() {
     this.paddle = new Paddle(175, 10, 50, 10);
+    this.score = 0;
 }
 
 Player.prototype.render = function() {
     this.paddle.render();
+    context.font = "20px Georgia";
+    context.fillStyle = "black";
+    context.fillText(this.score, (canvas.width / 2) - 40, (canvas.height / 2) + 10);
 };
 
 Computer.prototype.render = function() {
     this.paddle.render();
+    context.font = "20px Georgia";
+    context.fillStyle = "black";
+    context.fillText(this.score, (canvas.width / 2) + 20, (canvas.height / 2) + 10);
 };
 
 function Ball(x, y) {
@@ -79,7 +87,7 @@ var computer = new Computer();
 var ball = new Ball(200, 300);
 
 var render = function() {
-    context.fillStyle = "#FF00FF";
+    context.fillStyle = "#CCCCCC";
     context.fillRect(0, 0, width, height);
     player.render();
     computer.render();
@@ -117,6 +125,11 @@ Ball.prototype.update = function(paddle1, paddle2) {
     }
 
     if (this.y < 0 || this.y > 600) {
+        if (this.y < 0) {
+            player.score++;
+        } else {
+            computer.score++;
+        }
         this.x_speed = 0;
         this.y_speed = 3;
         this.x = 200;
@@ -124,7 +137,7 @@ Ball.prototype.update = function(paddle1, paddle2) {
     }
 
     if (top_y > 300) {
-        if (top_y < (paddle1.y + paddle1.height) && bottom_y > paddle1.y && top_x < (paddle1.x + paddle1.width) && bottom_x > paddle2.x) {
+        if (top_y < (paddle1.y + paddle1.height) && bottom_y > paddle1.y && top_x < (paddle1.x + paddle1.width) && bottom_x > paddle1.x) {
             this.y_speed = -3;
             this.x_speed += (paddle1.x_speed / 2);
             this.y += this.y_speed;
